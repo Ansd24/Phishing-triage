@@ -1,0 +1,30 @@
+Received: from relay1.example.net (relay1.example.net [198.51.100.20])
+    by mx.testmail.example.net with ESMTP id def456
+    for <user@testmail.example.net>; Sat, 31 Oct 2026 10:02:14 +0000
+Received: from workstation-pc (unknown [198.51.100.77])
+    by relay1.example.net with ESMTP id r1-998
+    for <user@testmail.example.net>; Sat, 31 Oct 2026 10:02:11 +0000
+Authentication-Results: mx.testmail.example.net;
+    spf=fail smtp.mailfrom=bulk-sender.example.org;
+    dkim=none;
+    dmarc=fail header.from=examplebank.example
+Return-Path: <bounce@bulk-sender.example.org>
+From: Example Bank Security <security@examplebank.example>
+Reply-To: support-desk@mailbox.example.net
+To: user@testmail.example.net
+Subject: URGENT: Verify your account within 24 hours
+Date: Sat, 31 Oct 2026 10:02:09 +0000
+Message-ID: <a8f3c2@workstation-pc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+
+Dear Customer,
+
+We have detected unusual activity on your account. To avoid
+suspension you must confirm your details within 24 hours:
+
+https://examplebank-secure-login.example.org/verify
+
+Failure to act will result in your account being closed.
+
+Example Bank Security Team

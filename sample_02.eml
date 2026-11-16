@@ -1,0 +1,26 @@
+Received: from mailer7.promo-sender.example.net (mailer7.promo-sender.example.net [192.0.2.45])
+    by mx.testmail.example.net with ESMTPS id ghi789
+    for <user@testmail.example.net>; Sat, 31 Oct 2026 11:40:33 +0000
+Authentication-Results: mx.testmail.example.net;
+    spf=pass smtp.mailfrom=promo-sender.example.net;
+    dkim=pass header.d=promo-sender.example.net;
+    dmarc=fail header.from=examplecorp.example
+Return-Path: <mailer@promo-sender.example.net>
+From: Payroll Team <payroll@examplecorp.example>
+Reply-To: payroll@examplecorp-hr.example.net
+To: user@testmail.example.net
+Subject: Action needed: update your payroll details
+Date: Sat, 31 Oct 2026 11:40:30 +0000
+Message-ID: <77c1d0@promo-sender.example.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+
+Hello,
+
+As part of our year-end process, please confirm your bank details
+for payroll using the secure portal below.
+
+https://examplecorp-hr.example.net/payroll/update
+
+Thank you,
+Payroll Team

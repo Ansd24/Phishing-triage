@@ -1,0 +1,24 @@
+Received: from mail-out.example.com (mail-out.example.com [203.0.113.10])
+    by mx.testmail.example.net with ESMTPS id abc123
+    for <user@testmail.example.net>; Sat, 31 Oct 2026 09:15:02 +0000
+Authentication-Results: mx.testmail.example.net;
+    spf=pass smtp.mailfrom=example.com;
+    dkim=pass header.d=example.com;
+    dmarc=pass header.from=example.com
+Return-Path: <notifications@example.com>
+From: Example Shop <notifications@example.com>
+To: user@testmail.example.net    
+Subject: Your order has shipped
+Date: Sat, 31 Oct 2026 09:15:00 +0000
+Message-ID: <20261031091500.1234@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+
+Hi,
+
+Your order #1001 has shipped. You can track it here:
+https://www.example.com/track/1001
+https://www.example.com/track/1002
+
+Thanks,
+Example Shop

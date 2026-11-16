@@ -1,0 +1,29 @@
+From: "Example Bank Security" <security@examplebank.test>
+To: victim@example.org
+Subject: Action required: verify your account
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="BOUNDARY123"
+
+--BOUNDARY123
+Content-Type: text/plain; charset="utf-8"
+
+Your account has been locked.
+Verify here: http://login-examplebank.example/verify
+
+--BOUNDARY123
+Content-Type: text/html; charset="utf-8"
+
+<html>
+  <body>
+    <p>Dear customer,</p>
+    <p>Your account has been <b>locked</b>.</p>
+    <p>
+      <a href="http://login-examplebank.example/verify">
+        https://www.examplebank.test/secure
+      </a>
+    </p>
+    <img src="http://tracker.example/pixel.gif?id=12345" width="1" height="1">
+  </body>
+</html>
+
+--BOUNDARY123--
