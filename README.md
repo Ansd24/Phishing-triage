@@ -28,8 +28,8 @@ The total score sets the rating:
 Requires Python 3.10 or newer.
 
 ```
-git clone <this-repo-url>
-cd <repo-folder>
+git clone https://github.com/Ansd24/Phishing-triage.git
+cd Phishing-triage
 python -m venv .venv
 .venv\Scripts\activate          # Windows
 source .venv/bin/activate       # macOS / Linux
