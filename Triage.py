@@ -4,11 +4,9 @@ from email.parser import BytesParser
 from bs4 import BeautifulSoup as bs
 from pathlib import Path
 import re
-import sys
-import glob
-
-
-
+import argparse
+import openpyxl
+import csv
 
 
 
@@ -23,10 +21,9 @@ pattern = re.compile(r'''
 
 
 
-def compare(return_path, sender, mail_to):
-    if return_path != sender:
-        print(" Warning: retrun path does not match the sender address")
-    print("return path is:", return_path,"\n","sender is: ", sender,"\n","mail sent to: ", mail_to)
+def compare(return_path, sender):
+    return return_path == sender
+        
 
 
 
@@ -48,16 +45,16 @@ def getLinks(msg):
 def check_auth(msg):
     auth_results = (msg["Authentication-Results"])
     if auth_results is None:
-        print("no authentication results header")
-        return
+        return ['no header']
+    check_list = []
     for part in auth_results.split():
         if part.startswith(("spf", "dkim", "dmarc")):
-            print(part)
+            check_list.append(part)
+    return check_list
 
 
 
-
-def calculate_score(msg, return_path, sender, urls):
+def calculate_score(msg, comparison, urls):
     score = 0
     auth_results = msg["Authentication-Results"]
 
@@ -71,12 +68,12 @@ def calculate_score(msg, return_path, sender, urls):
         if "dmarc=fail" in auth_results:
             score += 3
 
-    if return_path != sender:
+    if comparison == False:
         score += 2
 
     score += len(urls)
-    print('score is: ', score)
-    return verdict(score)
+    # print('score is: ', score)
+    return score
 
 def verdict(score):
     if score >= 6:
@@ -94,13 +91,10 @@ def defang(maliciousURL):
 
 
 def triage(msg):
-    
-
     try:
         return_path  = pattern.findall(msg["Return-Path"])[0]
     except(TypeError, IndexError):
         return_path = None
-        print('no return path specified')
     try:
         sender  = pattern.findall(msg["From"])[0]
     except (TypeError, IndexError):
@@ -112,30 +106,74 @@ def triage(msg):
     msg_body = (body.get_content())
     urls = re.findall(r"https?://[^\s\"'<>]+", msg_body)
     
-    safe_urls = defang(urls)
-    for u in safe_urls:
-        print(u)
-    compare(return_path, sender, mail_to)
+    comparison = compare(return_path, sender)
     links = getLinks(msg)
-    check_auth(msg)
+    auth  = check_auth(msg)
         
-    return calculate_score(msg, return_path, sender, urls + links)
+    score =  calculate_score(msg, comparison, urls + links)
+    verdictResult = verdict(score)
+    return {
+    "authentication": ",".join(auth),
+    "subject": msg["Subject"],
+    "sender": sender,
+    "return_path": return_path,
+    "to": mail_to,
+    "urls_found": len(urls + links),
+    "score": score,
+    "verdict": verdictResult,
+}
 
 
-target = Path(sys.argv[1])
-
+parser = argparse.ArgumentParser()
+parser.add_argument("target", help='a file or a folder')
+parser.add_argument("--format", choices=['x', 'csv', 't'], default='csv', help = 'report format (default is csv)')
+args = parser.parse_args()
+target = Path(args.target)
 if target.is_dir():
     files = list(target.glob("*.eml"))
 else:
     files = [target]
 
+
+values_in_results = []
 for mail in files:
     with open(mail, "rb") as file:
-        
         msg = BytesParser(policy=policy.default).parse(file)
-    print("--------"* 20)
-    print(file.name)
     result = triage(msg)
-    print(result)
-    
+    result = {"file": mail.name, **result}
+    values_in_results.append(result)
 
+
+def inTerminal(findings):
+    print(f"{'File Name':<16}{'Verdict':<20}  {'Score':>5}")
+    print('-' *45)
+    for i in findings:
+        print(f'{i["file"]:<16}{i["verdict"]:<20}  {i["score"]}')
+
+
+
+def inCSV(result):
+    with open('Report.csv', 'w', newline='', encoding='utf-8-sig') as f:
+        writer = csv.DictWriter(f, fieldnames=result[0].keys())
+        writer.writeheader()
+        writer.writerows(result)
+    print("saved")
+
+def inExcel(results):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    headers = list(results[0].keys())
+    ws.append(headers)
+    for row in results:
+        ws.append([row[h] for h in headers])
+    wb.save('Report.xlsx')
+    print('saved report as .xlsx')
+
+if not values_in_results:
+    print("No eml file found")
+elif args.format == "x":
+    inExcel(values_in_results)
+elif args.format == "t":
+    inTerminal(values_in_results)
+else:
+    inCSV(values_in_results)
