@@ -2,3 +2,10 @@
 .venv.venv/
 __pycache__/
 *.pyc
+
+# generated reports
+Report.csv
+Report.xlsx
+
+# real emails dropped in the project root (samples/ is still tracked)
+/*.eml
